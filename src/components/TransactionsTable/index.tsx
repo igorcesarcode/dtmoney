@@ -1,18 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { Container } from "./style";
 
-export function TransactionsTable(){
+export function TransactionsTable() {
+  
+  interface Transaction{
+    id: number,
+    title: string,
+    amount: number,
+    type: string,
+    category: string, 
+    createAt: string,
+  }
 
-useEffect(() => {
-  api.get('/transition')
-  .then(response => console.log(response.data))
-},[])
+  const [transitions, setTransitions] = useState<Transaction[]>([]);
+
+
+  useEffect(() => {
+    api.get('/transition')
+      .then(response => setTransitions(response.data.transitions))
+  }, [])
 
 
   return (
     <Container>
-      <table> 
+      <table>
         <thead>
           <tr>
             <th>Titulo</th>
@@ -21,22 +33,29 @@ useEffect(() => {
             <th>Data</th>
           </tr>
         </thead>
- 
-          <tbody>
-            <tr>
-              <td>Desenvolvimento de WebSite</td>
-              <td  className="deposit">R$ 12.000</td>
-              <td>Desenvolvimento</td>
-              <td>28/08/2021</td>
-            </tr>
-            <tr>
-              <td>Desenvolvimento de WebSite</td>
-              <td className="withdraw">R$ -12.000</td>
-              <td>Desenvolvimento</td>
-              <td>28/08/2021</td>
-            </tr>
 
-          </tbody>
+        <tbody>
+          {transitions.map(transition =>  (
+              <tr key={transition.id}>
+              <td>{transition.title}</td>
+              <td className={transition.type}>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              }).format(transition.amount)}
+              </td>
+              <td>{transition.category}</td>
+              <td>
+              {new Intl.DateTimeFormat('pt-BR').format(
+                
+                new Date (transition.createAt))
+              }
+              </td>
+            </tr>
+            )
+          )
+          }
+        </tbody>
 
 
       </table>

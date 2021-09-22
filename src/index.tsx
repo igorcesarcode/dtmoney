@@ -1,24 +1,50 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createServer } from 'miragejs'
+import { createServer,Model } from 'miragejs'
 import { App } from './App';
 
 createServer({
+
+  models:{
+    transition:Model,
+  },
+  seeds(server){
+    server.db.loadData({ 
+      transitions:[
+        {
+          id:1,
+          title: 'Frelancer de website',
+          type: 'deposit',
+          category: 'Dev',
+          amount: 6000,
+          createAt: new Date('2021-02-12 09:00:00'),
+
+        },
+        {
+          id:2,
+          title: 'Aluguel',
+          type: 'withdraw',
+          category: 'Casa',
+          amount: 1100,
+          createAt: new Date('2021-05-14 09:00:00'),
+
+        }
+      ]
+    })
+  },
   routes(){
     this.namespace = 'api';
 
     this.get('/transition', () =>{
-      return [
-      { 
-        id:1,
-        title: 'Transition',
-        amount: 400,
-        type: 'deposit',
-        category: 'Food',
-        createAt: new Date(),
-      }
-    ]
+     return this.schema.all('transition');
+ 
     })
+
+    this.post('/transition', (scheme,request) =>{
+      const data = JSON.parse( request.requestBody)
+      return scheme.create('transition', data)
+    })
+
   }
 })
 

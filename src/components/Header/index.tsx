@@ -1,4 +1,3 @@
-import { ComponentProps } from 'react';
 import LogoImg from '../../assets/logo.svg';
 import { Container, Content } from './styles';
 
